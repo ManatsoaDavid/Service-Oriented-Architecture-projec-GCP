@@ -1,0 +1,80 @@
+# =============================================================
+# values.yaml — Configuration Hotel Grand Palace SOA
+# =============================================================
+
+namespace: hotel
+
+# ── Images Docker (Artifact Registry GCP) ─────────────────
+images:
+  frontend:
+    repository: europe-west1-docker.pkg.dev/project-919f0101-d717-4509-b40/bda-images/hotel-frontend
+    tag: "v1.0"
+    pullPolicy: IfNotPresent
+
+  serviceChambres:
+    repository: europe-west1-docker.pkg.dev/project-919f0101-d717-4509-b40/bda-images/hotel-chambres
+    tag: "v1.0"
+    pullPolicy: IfNotPresent
+
+  serviceReservation:
+    repository: europe-west1-docker.pkg.dev/project-919f0101-d717-4509-b40/bda-images/hotel-reservation
+    tag: "v1.0"
+    pullPolicy: IfNotPresent
+
+# ── Service Chambres (Python/Flask) ───────────────────────
+serviceChambres:
+  replicaCount: 1
+  port: 5001
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      cpu: 300m
+      memory: 256Mi
+
+# ── Service Reservation (Node.js/Express) ─────────────────
+serviceReservation:
+  replicaCount: 1
+  port: 5002
+  # URL du service-chambres via DNS K8s (pas besoin de modifier !)
+  chambresServiceUrl: "http://service-chambres:5001"
+  resources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      cpu: 300m
+      memory: 256Mi
+
+# ── Frontend (Nginx) ───────────────────────────────────────
+frontend:
+  replicaCount: 1
+  port: 80
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+# ── Ingress ────────────────────────────────────────────────
+ingress:
+  host: "hotel.34.53.243.100.nip.io"
+  className: nginx
+
+# ── HPA ────────────────────────────────────────────────────
+hpa:
+  frontend:
+    minReplicas: 1
+    maxReplicas: 3
+    cpuThreshold: 70
+  serviceChambres:
+    minReplicas: 1
+    maxReplicas: 3
+    cpuThreshold: 70
+  serviceReservation:
+    minReplicas: 1
+    maxReplicas: 3
+    cpuThreshold: 70

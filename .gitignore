@@ -1,0 +1,89 @@
+# ============================================
+# SECRETS — ne JAMAIS mettre sur GitHub
+# ============================================
+
+.env
+.env.*
+*.key
+*.pem
+
+
+# ============================================
+# TERRAFORM — si vous en ajoutez plus tard
+# ============================================
+
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+tfplan
+
+
+# ============================================
+# NODE / SERVICE-RESERVATION
+# ============================================
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+
+
+# ============================================
+# PYTHON / SERVICE-CHAMBRES
+# ============================================
+
+__pycache__/
+*.py[cod]
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+
+# ============================================
+# DOCKER
+# ============================================
+
+.docker/
+
+
+# ============================================
+# KUBERNETES — credentials sensibles
+# ============================================
+
+kubeconfig
+*.kubeconfig
+
+
+# ============================================
+# SYSTÈMES D'EXPLOITATION & IDE
+# ============================================
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Linux
+*~
+
+# VS Code
+.vscode/
+
+# IntelliJ
+.idea/
+
+# Vim
+*.swp
+*.swo
+
+
+# ============================================
+# LOGS & TEMPORAIRES
+# ============================================
+
+*.log
+logs/
+tmp/
+temp/

@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hotel-nginx-conf
+  namespace: hotel
+  labels:
+    app.kubernetes.io/name: hotel
+    app.kubernetes.io/instance: {{ .Release.Name }}
+data:
+  default.conf: |
+    server {
+        listen 80;
+        server_name _;
+
+        root /usr/share/nginx/html;
+        index index.html;
+
+        location / {
+            try_files $uri $uri/ /index.html;
+        }
+
+        location /api/chambres {
+            proxy_pass         http://service-chambres:5001/chambres;
+            proxy_set_header   Host $host;
+            proxy_set_header   X-Real-IP $remote_addr;
+            add_header         X-Served-By "service-chambres (Python/Flask)";
+        }
+
+        location /api/reservations {
+            proxy_pass         http://service-reservation:5002/reservations;
+            proxy_set_header   Host $host;
+            proxy_set_header   X-Real-IP $remote_addr;
+            add_header         X-Served-By "service-reservation (Node.js/Express)";
+        }
+
+        location /api/health/chambres {
+            proxy_pass http://service-chambres:5001/health;
+        }
+
+        location /api/health/reservations {
+            proxy_pass http://service-reservation:5002/health;
+        }
+    }

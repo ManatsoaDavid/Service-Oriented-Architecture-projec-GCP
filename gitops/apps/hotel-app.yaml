@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hotel
+  namespace: argocd
+  labels:
+    project: hotel-soa
+
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/ManatsoaDavid/Service-Oriented-Architecture-projec-GCP.git
+    targetRevision: main
+    path: helm/hotel
+    helm:
+      releaseName: hotel
+      valueFiles:
+        - values.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: hotel
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+    retry:
+      limit: 3
+      backoff:
+        duration: 10s
+        maxDuration: 3m

@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-reservation
+  namespace: hotel
+  labels:
+    app.kubernetes.io/name: hotel
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app: service-reservation
+spec:
+  replicas: {{ .Values.serviceReservation.replicaCount }}
+  selector:
+    matchLabels:
+      app: service-reservation
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: service-reservation
+    spec:
+      # Attendre que service-chambres soit pret
+      initContainers:
+        - name: wait-for-chambres
+          image: busybox:1.35
+          command:
+            - sh
+            - -c
+            - |
+              until wget -q -O- http://service-chambres:5001/health; do
+                echo "En attente de service-chambres..."
+                sleep 3
+              done
+              echo "service-chambres est pret !"
+
+      containers:
+        - name: service-reservation
+          image: {{ .Values.images.serviceReservation.repository }}:{{ .Values.images.serviceReservation.tag }}
+          imagePullPolicy: {{ .Values.images.serviceReservation.pullPolicy }}
+          ports:
+            - containerPort: 5002
+              name: http
+
+          env:
+            # URL du service-chambres via DNS K8s
+            # Fonctionne identiquement a Docker Compose !
+            - name: CHAMBRES_SERVICE_URL
+              value: {{ .Values.serviceReservation.chambresServiceUrl }}
+
+          resources:
+            requests:
+              cpu: {{ .Values.serviceReservation.resources.requests.cpu }}
+              memory: {{ .Values.serviceReservation.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.serviceReservation.resources.limits.cpu }}
+              memory: {{ .Values.serviceReservation.resources.limits.memory }}
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5002
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5002
+            initialDelaySeconds: 20
+            periodSeconds: 15
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-reservation
+  namespace: hotel
+  labels:
+    app.kubernetes.io/name: hotel
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app: service-reservation
+spec:
+  type: ClusterIP
+  selector:
+    app: service-reservation
+  ports:
+    - port: 5002
+      targetPort: 5002
+      name: http

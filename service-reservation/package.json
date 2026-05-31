@@ -1,0 +1,13 @@
+{
+  "name": "service-reservation",
+  "version": "1.0.0",
+  "description": "Service SOA de reservation de chambres d'hotel — Node.js/Express",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}

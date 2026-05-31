@@ -1,0 +1,6 @@
+apiVersion: v2
+name: hotel
+description: Hotel Grand Palace - Architecture SOA (Python + Node.js + Nginx)
+type: application
+version: 1.0.0
+appVersion: "1.0.0"

@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-chambres
+  namespace: hotel
+  labels:
+    app.kubernetes.io/name: hotel
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app: service-chambres
+spec:
+  replicas: {{ .Values.serviceChambres.replicaCount }}
+  selector:
+    matchLabels:
+      app: service-chambres
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: service-chambres
+    spec:
+      containers:
+        - name: service-chambres
+          image: {{ .Values.images.serviceChambres.repository }}:{{ .Values.images.serviceChambres.tag }}
+          imagePullPolicy: {{ .Values.images.serviceChambres.pullPolicy }}
+          ports:
+            - containerPort: 5001
+              name: http
+
+          resources:
+            requests:
+              cpu: {{ .Values.serviceChambres.resources.requests.cpu }}
+              memory: {{ .Values.serviceChambres.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.serviceChambres.resources.limits.cpu }}
+              memory: {{ .Values.serviceChambres.resources.limits.memory }}
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5001
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5001
+            initialDelaySeconds: 20
+            periodSeconds: 15
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-chambres
+  namespace: hotel
+  labels:
+    app.kubernetes.io/name: hotel
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app: service-chambres
+spec:
+  type: ClusterIP
+  selector:
+    app: service-chambres
+  ports:
+    - port: 5001
+      targetPort: 5001
+      name: http

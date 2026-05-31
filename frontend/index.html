@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Hôtel Grand Palace — Démo SOA</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --or:     #C9A84C;
+    --or-clair: #E8D5A3;
+    --noir:   #0D0D0D;
+    --sombre: #161616;
+    --gris:   #1E1E1E;
+    --texte:  #E8E2D9;
+    --doux:   #9A9080;
+    --python: #3B82F6;
+    --node:   #22C55E;
+    --nginx:  #C9A84C;
+    --err:    #EF4444;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--noir);
+    color: var(--texte);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+
+  /* ─── HEADER ─────────────────────────────────────────────── */
+  header {
+    background: var(--sombre);
+    border-bottom: 1px solid rgba(201,168,76,.2);
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .hotel-nom {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 300;
+    letter-spacing: .1em;
+    color: var(--or);
+  }
+
+  .hotel-nom span { color: var(--texte); font-style: italic; }
+
+  .soa-badge {
+    background: rgba(201,168,76,.1);
+    border: 1px solid rgba(201,168,76,.4);
+    color: var(--or);
+    font-size: .7rem;
+    font-weight: 500;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    padding: .3rem .8rem;
+    border-radius: 2px;
+  }
+
+  /* ─── HERO ───────────────────────────────────────────────── */
+  .hero {
+    text-align: center;
+    padding: 4rem 2rem 3rem;
+    background: linear-gradient(180deg, rgba(201,168,76,.04) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(201,168,76,.1);
+  }
+
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 300;
+    line-height: 1.2;
+    margin-bottom: .5rem;
+  }
+
+  .hero h1 em { color: var(--or); font-style: italic; }
+
+  .hero p {
+    color: var(--doux);
+    font-size: .9rem;
+    letter-spacing: .04em;
+    margin-top: .5rem;
+  }
+
+  /* ─── ARCHITECTURE SOA ───────────────────────────────────── */
+  .architecture {
+    padding: 2.5rem 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .section-titre {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--or);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+  }
+
+  .section-titre::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(201,168,76,.2);
+  }
+
+  .arch-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    gap: 0;
+    align-items: center;
+    background: var(--gris);
+    border: 1px solid rgba(201,168,76,.15);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .arch-service {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 6px;
+  }
+
+  .arch-service .s-label {
+    font-size: .65rem;
+    font-weight: 500;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    margin-bottom: .5rem;
+  }
+
+  .arch-service .s-nom {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: .3rem;
+  }
+
+  .arch-service .s-lang {
+    font-size: .7rem;
+    color: var(--doux);
+    font-family: 'Courier New', monospace;
+  }
+
+  .arch-service .s-port {
+    display: inline-block;
+    margin-top: .4rem;
+    font-size: .65rem;
+    padding: .15rem .5rem;
+    border-radius: 2px;
+    font-family: 'Courier New', monospace;
+  }
+
+  .svc-frontend { background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.3); }
+  .svc-frontend .s-label, .svc-frontend .s-port { color: var(--nginx); background: rgba(201,168,76,.15); }
+
+  .svc-python { background: rgba(59,130,246,.1); border: 1px solid rgba(59,130,246,.3); }
+  .svc-python .s-label, .svc-python .s-port { color: var(--python); background: rgba(59,130,246,.15); }
+
+  .svc-node { background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.3); }
+  .svc-node .s-label, .svc-node .s-port { color: var(--node); background: rgba(34,197,94,.15); }
+
+  .arch-fleche {
+    text-align: center;
+    padding: 0 .5rem;
+    font-size: .75rem;
+    color: var(--doux);
+    line-height: 1.4;
+  }
+
+  .arch-fleche .ftype {
+    font-size: .6rem;
+    letter-spacing: .08em;
+    display: block;
+    margin-bottom: .2rem;
+    font-family: 'Courier New', monospace;
+  }
+
+  /* ─── STATUT SERVICES ───────────────────────────────────── */
+  .statut-bar {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: var(--gris);
+    border: 1px solid rgba(201,168,76,.1);
+    border-radius: 6px;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .statut-item {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .75rem;
+    color: var(--doux);
+  }
+
+  .statut-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--gris);
+    transition: background .3s;
+  }
+
+  .statut-dot.ok  { background: var(--node); box-shadow: 0 0 6px var(--node); }
+  .statut-dot.err { background: var(--err);  box-shadow: 0 0 6px var(--err); }
+  .statut-dot.loading { background: var(--or); animation: pulse 1s infinite; }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  /* ─── APPEL EN COURS ─────────────────────────────────────── */
+  .appel-live {
+    display: none;
+    align-items: center;
+    gap: .6rem;
+    font-size: .75rem;
+    font-family: 'Courier New', monospace;
+    color: var(--or);
+    padding: .5rem 1rem;
+    background: rgba(201,168,76,.06);
+    border: 1px solid rgba(201,168,76,.2);
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+    animation: fadeIn .3s ease;
+  }
+
+  .appel-live.visible { display: flex; }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:none} }
+
+  /* ─── CHAMBRES ───────────────────────────────────────────── */
+  .section { max-width: 900px; margin: 0 auto; padding: 0 2rem 3rem; }
+
+  .chambres-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .chambre-card {
+    background: var(--gris);
+    border: 1px solid rgba(201,168,76,.15);
+    border-radius: 8px;
+    padding: 1.2rem;
+    transition: border-color .2s, transform .2s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .chambre-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--or), transparent);
+    opacity: 0;
+    transition: opacity .3s;
+  }
+
+  .chambre-card:hover { border-color: rgba(201,168,76,.4); transform: translateY(-2px); }
+  .chambre-card:hover::before { opacity: 1; }
+  .chambre-card.indisponible { opacity: .45; cursor: not-allowed; }
+
+  .chambre-card .badge-type {
+    font-size: .65rem;
+    font-weight: 500;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--or);
+    margin-bottom: .5rem;
+  }
+
+  .chambre-card .numero {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 300;
+    color: var(--or-clair);
+    line-height: 1;
+    margin-bottom: .4rem;
+  }
+
+  .chambre-card .desc {
+    font-size: .78rem;
+    color: var(--doux);
+    line-height: 1.5;
+    margin-bottom: .8rem;
+  }
+
+  .chambre-card .tarif {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--texte);
+  }
+
+  .chambre-card .tarif span {
+    font-size: .7rem;
+    color: var(--doux);
+    font-weight: 300;
+  }
+
+  .chambre-card .dispo-badge {
+    display: inline-block;
+    font-size: .65rem;
+    font-weight: 500;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: .2rem .6rem;
+    border-radius: 2px;
+    margin-top: .6rem;
+  }
+
+  .dispo-badge.ok  { background: rgba(34,197,94,.15);  color: var(--node); }
+  .dispo-badge.non { background: rgba(239,68,68,.15);  color: var(--err);  }
+
+  .btn-reserver {
+    width: 100%;
+    margin-top: .8rem;
+    padding: .5rem;
+    background: rgba(201,168,76,.1);
+    border: 1px solid rgba(201,168,76,.3);
+    color: var(--or);
+    font-family: 'DM Sans', sans-serif;
+    font-size: .75rem;
+    font-weight: 500;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background .2s;
+  }
+
+  .btn-reserver:hover { background: rgba(201,168,76,.2); }
+
+  /* ─── SOURCE BADGE ───────────────────────────────────────── */
+  .source-tag {
+    font-size: .6rem;
+    font-family: 'Courier New', monospace;
+    padding: .15rem .5rem;
+    border-radius: 2px;
+    margin-bottom: 1rem;
+    display: inline-block;
+  }
+
+  .source-python { background: rgba(59,130,246,.15); color: var(--python); border: 1px solid rgba(59,130,246,.3); }
+  .source-node   { background: rgba(34,197,94,.15);  color: var(--node);   border: 1px solid rgba(34,197,94,.3); }
+
+  /* ─── MODAL RESERVATION ──────────────────────────────────── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.8);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--sombre);
+    border: 1px solid rgba(201,168,76,.3);
+    border-radius: 10px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 440px;
+    animation: slideUp .3s ease;
+  }
+
+  @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+
+  .modal h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: var(--or);
+    margin-bottom: .3rem;
+  }
+
+  .modal .modal-sub {
+    font-size: .75rem;
+    color: var(--doux);
+    margin-bottom: 1.5rem;
+    font-family: 'Courier New', monospace;
+  }
+
+  .form-group { margin-bottom: 1rem; }
+
+  .form-group label {
+    display: block;
+    font-size: .7rem;
+    font-weight: 500;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--doux);
+    margin-bottom: .3rem;
+  }
+
+  .form-group input {
+    width: 100%;
+    background: var(--gris);
+    border: 1px solid rgba(201,168,76,.2);
+    border-radius: 4px;
+    padding: .6rem .8rem;
+    color: var(--texte);
+    font-family: 'DM Sans', sans-serif;
+    font-size: .85rem;
+    outline: none;
+    transition: border-color .2s;
+  }
+
+  .form-group input:focus { border-color: rgba(201,168,76,.5); }
+
+  .chambre-info-modal {
+    background: rgba(201,168,76,.06);
+    border: 1px solid rgba(201,168,76,.15);
+    border-radius: 4px;
+    padding: .7rem 1rem;
+    margin-bottom: 1rem;
+    font-size: .8rem;
+  }
+
+  .chambre-info-modal strong { color: var(--or); }
+
+  .modal-actions { display: flex; gap: .8rem; margin-top: 1.5rem; }
+
+  .btn-confirmer {
+    flex: 1;
+    padding: .7rem;
+    background: linear-gradient(135deg, var(--or), #A8832A);
+    border: none;
+    border-radius: 4px;
+    color: var(--noir);
+    font-family: 'DM Sans', sans-serif;
+    font-size: .8rem;
+    font-weight: 500;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity .2s;
+  }
+
+  .btn-confirmer:hover { opacity: .9; }
+  .btn-confirmer:disabled { opacity: .5; cursor: not-allowed; }
+
+  .btn-annuler {
+    padding: .7rem 1rem;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 4px;
+    color: var(--doux);
+    font-family: 'DM Sans', sans-serif;
+    font-size: .8rem;
+    cursor: pointer;
+    transition: border-color .2s;
+  }
+
+  .btn-annuler:hover { border-color: rgba(255,255,255,.3); }
+
+  /* ─── CONFIRMATION ───────────────────────────────────────── */
+  .confirmation {
+    display: none;
+    background: rgba(34,197,94,.08);
+    border: 1px solid rgba(34,197,94,.3);
+    border-radius: 6px;
+    padding: 1rem;
+    margin-top: 1rem;
+    animation: fadeIn .4s ease;
+  }
+
+  .confirmation.visible { display: block; }
+
+  .confirmation .conf-titre {
+    color: var(--node);
+    font-size: .75rem;
+    font-weight: 500;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: .5rem;
+  }
+
+  .confirmation pre {
+    font-size: .7rem;
+    font-family: 'Courier New', monospace;
+    color: var(--doux);
+    white-space: pre-wrap;
+    word-break: break-all;
+    line-height: 1.6;
+  }
+
+  /* ─── ETAT CHARGEMENT ────────────────────────────────────── */
+  .skeleton {
+    background: linear-gradient(90deg, var(--gris) 25%, rgba(201,168,76,.05) 50%, var(--gris) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+    height: 160px;
+  }
+
+  @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+  /* ─── FOOTER ─────────────────────────────────────────────── */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    border-top: 1px solid rgba(201,168,76,.1);
+    font-size: .7rem;
+    color: var(--doux);
+    letter-spacing: .08em;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hotel-nom">Grand <span>Palace</span> Hôtel</div>
+  <div class="soa-badge">Démo Architecture SOA</div>
+</header>
+
+<div class="hero">
+  <h1>Bienvenue au<br><em>Grand Palace Hôtel</em></h1>
+  <p>Réservez votre séjour · 3 services indépendants · 3 langages différents</p>
+</div>
+
+<!-- ARCHITECTURE SOA -->
+<div class="architecture">
+  <div class="section-titre">Architecture SOA</div>
+
+  <div class="arch-grid">
+    <div class="arch-service svc-frontend">
+      <div class="s-label">Consommateur</div>
+      <div class="s-nom">Frontend</div>
+      <div class="s-lang">HTML / JS / nginx</div>
+      <div class="s-port">:80</div>
+    </div>
+
+    <div class="arch-fleche">
+      <span class="ftype">GET /api/chambres</span>
+      ↔
+    </div>
+
+    <div class="arch-service svc-python">
+      <div class="s-label">Fournisseur</div>
+      <div class="s-nom">Chambres</div>
+      <div class="s-lang">Python / Flask</div>
+      <div class="s-port">:5001</div>
+    </div>
+
+    <div class="arch-fleche">
+      <span class="ftype">POST /api/reservations</span>
+      ↔
+    </div>
+
+    <div class="arch-service svc-node">
+      <div class="s-label">Fournisseur</div>
+      <div class="s-nom">Réservation</div>
+      <div class="s-lang">Node.js / Express</div>
+      <div class="s-port">:5002</div>
+    </div>
+  </div>
+
+  <!-- Statut services -->
+  <div class="statut-bar">
+    <div class="statut-item">
+      <div class="statut-dot loading" id="dot-chambres"></div>
+      <span>service-chambres (Python)</span>
+    </div>
+    <div class="statut-item">
+      <div class="statut-dot loading" id="dot-reservation"></div>
+      <span>service-reservation (Node.js)</span>
+    </div>
+    <div class="statut-item" style="margin-left:auto;">
+      <div id="appel-live" class="appel-live">
+        <span>▶</span>
+        <span id="appel-texte"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHAMBRES -->
+<div class="section">
+  <div class="section-titre">Chambres Disponibles</div>
+  <div class="source-tag source-python" style="margin-bottom:1rem;">
+    ← Données fournies par service-chambres (Python/Flask) via GET /api/chambres
+  </div>
+  <div class="chambres-grid" id="chambres-grid">
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+  </div>
+
+  <!-- RESERVATIONS -->
+  <div class="section-titre">Réservations Enregistrées</div>
+  <div class="source-tag source-node" style="margin-bottom:1rem;">
+    ← Données fournies par service-reservation (Node.js/Express) via GET /api/reservations
+  </div>
+  <div id="reservations-liste" style="font-size:.8rem;color:var(--doux);font-style:italic;">
+    Aucune réservation pour l'instant.
+  </div>
+</div>
+
+<!-- MODAL RESERVATION -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h2>Réserver une chambre</h2>
+    <div class="modal-sub" id="modal-sub">POST /api/reservations → Node.js/Express</div>
+
+    <div class="chambre-info-modal" id="modal-chambre-info"></div>
+
+    <div class="form-group">
+      <label>Nom</label>
+      <input type="text" id="input-nom" placeholder="Rakoto"/>
+    </div>
+    <div class="form-group">
+      <label>Prénom</label>
+      <input type="text" id="input-prenom" placeholder="Jean"/>
+    </div>
+    <div class="form-group">
+      <label>Date d'arrivée</label>
+      <input type="date" id="input-arrivee"/>
+    </div>
+    <div class="form-group">
+      <label>Date de départ</label>
+      <input type="date" id="input-depart"/>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-annuler" onclick="fermerModal()">Annuler</button>
+      <button class="btn-confirmer" id="btn-confirmer" onclick="confirmerReservation()">
+        Confirmer la réservation
+      </button>
+    </div>
+
+    <!-- Réponse JSON du service -->
+    <div class="confirmation" id="confirmation">
+      <div class="conf-titre">✓ Réponse du service-reservation (Node.js)</div>
+      <pre id="confirmation-json"></pre>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Grand Palace Hôtel · Démo Architecture SOA · ENI Madagascar<br>
+  Frontend (nginx) · Service Chambres (Python/Flask :5001) · Service Réservation (Node.js :5002)
+</footer>
+
+<script>
+// ─── ÉTAT ────────────────────────────────────────────────────────────
+let chambresData = [];
+let chambreSelectionnee = null;
+
+// ─── AFFICHER APPEL EN COURS ─────────────────────────────────────────
+function montrerAppel(texte) {
+  const el = document.getElementById('appel-live');
+  document.getElementById('appel-texte').textContent = texte;
+  el.classList.add('visible');
+  setTimeout(() => el.classList.remove('visible'), 2500);
+}
+
+// ─── VÉRIFIER SANTÉ DES SERVICES ─────────────────────────────────────
+async function verifierServices() {
+  const checks = [
+    { url: '/api/health/chambres',     dot: 'dot-chambres'   },
+    { url: '/api/health/reservations', dot: 'dot-reservation' }
+  ];
+
+  for (const { url, dot } of checks) {
+    try {
+      const r = await fetch(url);
+      document.getElementById(dot).className =
+        'statut-dot ' + (r.ok ? 'ok' : 'err');
+    } catch {
+      document.getElementById(dot).className = 'statut-dot err';
+    }
+  }
+}
+
+// ─── CHARGER LES CHAMBRES (Python/Flask) ─────────────────────────────
+async function chargerChambres() {
+  montrerAppel('GET /api/chambres → service-chambres (Python)');
+  try {
+    const r   = await fetch('/api/chambres');
+    const data = await r.json();
+    chambresData = data.chambres || [];
+    afficherChambres(chambresData);
+  } catch (e) {
+    document.getElementById('chambres-grid').innerHTML =
+      '<p style="color:var(--err);font-size:.85rem;">Impossible de joindre le service-chambres (Python).</p>';
+  }
+}
+
+// ─── AFFICHER LES CHAMBRES ────────────────────────────────────────────
+function afficherChambres(chambres) {
+  const grid = document.getElementById('chambres-grid');
+  if (!chambres.length) { grid.innerHTML = '<p style="color:var(--doux)">Aucune chambre.</p>'; return; }
+
+  grid.innerHTML = chambres.map(c => `
+    <div class="chambre-card ${!c.disponible ? 'indisponible' : ''}"
+         onclick="${c.disponible ? `ouvrirModal(${c.id})` : ''}">
+      <div class="badge-type">${c.type}</div>
+      <div class="numero">N° ${c.numero}</div>
+      <div class="desc">${c.description}</div>
+      <div class="tarif">${c.tarif.toLocaleString('fr')} <span>${c.devise} / nuit</span></div>
+      <div class="dispo-badge ${c.disponible ? 'ok' : 'non'}">
+        ${c.disponible ? 'Disponible' : 'Occupée'}
+      </div>
+      ${c.disponible ? '<button class="btn-reserver">Réserver →</button>' : ''}
+    </div>
+  `).join('');
+}
+
+// ─── CHARGER LES RÉSERVATIONS (Node.js) ──────────────────────────────
+async function chargerReservations() {
+  montrerAppel('GET /api/reservations → service-reservation (Node.js)');
+  try {
+    const r    = await fetch('/api/reservations');
+    const data  = await r.json();
+    afficherReservations(data.reservations || []);
+  } catch {
+    document.getElementById('reservations-liste').textContent =
+      'Impossible de joindre le service-reservation (Node.js).';
+  }
+}
+
+// ─── AFFICHER LES RÉSERVATIONS ────────────────────────────────────────
+function afficherReservations(reservations) {
+  const el = document.getElementById('reservations-liste');
+  if (!reservations.length) {
+    el.innerHTML = '<p style="font-size:.8rem;color:var(--doux);font-style:italic;">Aucune réservation pour l\'instant.</p>';
+    return;
+  }
+
+  el.innerHTML = reservations.map(r => `
+    <div style="background:var(--gris);border:1px solid rgba(201,168,76,.15);border-radius:6px;padding:.8rem 1rem;margin-bottom:.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;">
+      <div>
+        <div style="font-size:.85rem;font-weight:500;color:var(--texte);">${r.prenom_client} ${r.nom_client}</div>
+        <div style="font-size:.7rem;color:var(--doux);margin-top:.2rem;">Chambre ${r.id_chambre} · ${r.type_chambre} · ${r.date_arrivee} → ${r.date_depart}</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:.65rem;font-family:'Courier New',monospace;color:var(--node);">${r.numero_confirmation}</div>
+        <div style="font-size:.65rem;background:rgba(34,197,94,.1);color:var(--node);padding:.1rem .4rem;border-radius:2px;margin-top:.2rem;">${r.statut}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─── OUVRIR MODAL ─────────────────────────────────────────────────────
+function ouvrirModal(id) {
+  chambreSelectionnee = chambresData.find(c => c.id === id);
+  if (!chambreSelectionnee) return;
+
+  document.getElementById('modal-chambre-info').innerHTML =
+    `<strong>${chambreSelectionnee.type}</strong> — Chambre N°${chambreSelectionnee.numero}<br>
+     <span style="color:var(--doux);font-size:.75rem;">${chambreSelectionnee.tarif.toLocaleString('fr')} Ar / nuit · ${chambreSelectionnee.description}</span>`;
+
+  // Dates par défaut
+  const today = new Date().toISOString().split('T')[0];
+  const demain = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+  document.getElementById('input-arrivee').value = today;
+  document.getElementById('input-depart').value  = demain;
+  document.getElementById('input-nom').value     = '';
+  document.getElementById('input-prenom').value  = '';
+  document.getElementById('confirmation').className = 'confirmation';
+  document.getElementById('btn-confirmer').disabled = false;
+  document.getElementById('btn-confirmer').textContent = 'Confirmer la réservation';
+
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function fermerModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  chambreSelectionnee = null;
+}
+
+// ─── CONFIRMER RÉSERVATION (POST → Node.js) ───────────────────────────
+async function confirmerReservation() {
+  const nom     = document.getElementById('input-nom').value.trim();
+  const prenom  = document.getElementById('input-prenom').value.trim();
+  const arrivee = document.getElementById('input-arrivee').value;
+  const depart  = document.getElementById('input-depart').value;
+
+  if (!nom || !arrivee || !depart) {
+    alert('Veuillez remplir tous les champs obligatoires.');
+    return;
+  }
+
+  const btn = document.getElementById('btn-confirmer');
+  btn.disabled = true;
+  btn.textContent = 'Envoi au service-reservation...';
+
+  montrerAppel('POST /api/reservations → service-reservation (Node.js)');
+
+  const payload = {
+    nom_client:    nom,
+    prenom_client: prenom,
+    id_chambre:    chambreSelectionnee.id,
+    type_chambre:  chambreSelectionnee.type,
+    tarif:         chambreSelectionnee.tarif,
+    date_arrivee:  arrivee,
+    date_depart:   depart
+  };
+
+  try {
+    const r    = await fetch('/api/reservations', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    const data  = await r.json();
+
+    document.getElementById('confirmation-json').textContent =
+      JSON.stringify(data, null, 2);
+    document.getElementById('confirmation').className = 'confirmation visible';
+    btn.textContent = '✓ Confirmée !';
+
+    // Rafraîchir la liste des réservations
+    setTimeout(() => {
+      chargerReservations();
+      setTimeout(fermerModal, 1500);
+    }, 2000);
+
+  } catch {
+    alert('Erreur : impossible de joindre le service-reservation (Node.js).');
+    btn.disabled = false;
+    btn.textContent = 'Confirmer la réservation';
+  }
+}
+
+// Fermer modal si clic sur overlay
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) fermerModal();
+});
+
+// ─── INITIALISATION ───────────────────────────────────────────────────
+(async () => {
+  await verifierServices();
+  await chargerChambres();
+  await chargerReservations();
+})();
+</script>
+</body>
+</html>
