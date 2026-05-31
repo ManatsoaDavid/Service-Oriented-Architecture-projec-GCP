@@ -1,0 +1,73 @@
+name: CI/CD Frontend Hotel
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "frontend/**"
+
+env:
+  PROJECT_ID: project-919f0101-d717-4509-b40
+  REGISTRY: europe-west1-docker.pkg.dev
+  IMAGE: europe-west1-docker.pkg.dev/project-919f0101-d717-4509-b40/bda-images/hotel-frontend
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generer le tag
+        id: tag
+        run: |
+          SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+          echo "IMAGE_TAG=${SHORT_SHA}" >> $GITHUB_OUTPUT
+          echo "Tag image : ${SHORT_SHA}"
+
+      - name: Authentification GCP Workload Identity
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.SERVICE_ACCOUNT }}
+
+      - name: Configurer gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configurer Docker pour Artifact Registry
+        run: gcloud auth configure-docker europe-west1-docker.pkg.dev --quiet
+
+      - name: Build image Docker frontend
+        run: |
+          docker build \
+            -t ${{ env.IMAGE }}:${{ steps.tag.outputs.IMAGE_TAG }} \
+            ./frontend
+          echo "Image construite : ${{ env.IMAGE }}:${{ steps.tag.outputs.IMAGE_TAG }}"
+
+      - name: Push image sur Artifact Registry
+        run: |
+          docker push ${{ env.IMAGE }}:${{ steps.tag.outputs.IMAGE_TAG }}
+          echo "Image poussee avec succes !"
+
+      - name: Mettre a jour tag dans values.yaml
+        run: |
+          TAG="${{ steps.tag.outputs.IMAGE_TAG }}"
+          sed -i "/hotel-frontend/{n;s/tag: .*/tag: \"${TAG}\"/}" helm/hotel/values.yaml
+          echo "Verification :"
+          grep -A 3 "hotel-frontend" helm/hotel/values.yaml
+
+      - name: Commit et Push values.yaml
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git pull origin main
+          git add helm/hotel/values.yaml
+          git diff --staged --quiet || git commit -m "ci: hotel-frontend tag ${{ steps.tag.outputs.IMAGE_TAG }} [skip ci]"
+          git push origin main
