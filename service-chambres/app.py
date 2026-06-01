@@ -4,8 +4,8 @@ Responsabilite : exposer et gerer les chambres de l'hotel
 Port : 5001
 
 Routes :
-  API REST  → /chambres, /chambres/<id>, etc.
-  Interface → /admin  (page HTML pour ajouter/gerer les chambres)
+  API REST  -> /chambres, /chambres/<id>, etc.
+  Interface -> /admin  (page HTML pour ajouter/gerer les chambres)
 """
 
 from flask import Flask, jsonify, request, render_template_string
@@ -14,7 +14,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-# ─── Données en mémoire ───────────────────────────────────────────────────
+# Donnees en memoire
 CHAMBRES = [
     {
         "id": 1,
@@ -68,16 +68,15 @@ CHAMBRES = [
     }
 ]
 
-prochain_id = 6  # compteur auto-increment
+prochain_id = 6
 
-# ─── Template HTML de l'interface d'administration ───────────────────────
 ADMIN_HTML = """
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Admin — Service Chambres (Python/Flask)</title>
+<title>Admin -- Service Chambres (Python/Flask)</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: system-ui, sans-serif; background: #0f0f0f; color: #e8e2d9; min-height: 100vh; }
@@ -99,7 +98,6 @@ ADMIN_HTML = """
   }
 
   .container { max-width: 960px; margin: 0 auto; padding: 2rem; }
-
   .grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 1.5rem; align-items: start; }
 
   .panel {
@@ -154,7 +152,6 @@ ADMIN_HTML = """
   .alert.ok  { background: rgba(34,197,94,.1);  color: #4ade80; border: 1px solid rgba(34,197,94,.3); display: block; }
   .alert.err { background: rgba(239,68,68,.1);  color: #f87171; border: 1px solid rgba(239,68,68,.3); display: block; }
 
-  /* ── Table des chambres ── */
   .search-bar {
     width: 100%; background: #1e1e1e;
     border: 1px solid rgba(201,168,76,.2); border-radius: 5px;
@@ -180,9 +177,7 @@ ADMIN_HTML = """
     display: flex; align-items: center; gap: .5rem;
     margin-bottom: .25rem;
   }
-  .chambre-info .num {
-    font-size: 1rem; font-weight: 500; color: #C9A84C;
-  }
+  .chambre-info .num { font-size: 1rem; font-weight: 500; color: #C9A84C; }
   .chambre-info .type {
     font-size: .65rem; font-weight: 500; text-transform: uppercase;
     letter-spacing: .1em; color: #7a7060;
@@ -244,33 +239,30 @@ ADMIN_HTML = """
 <body>
 
 <div class="header">
-  <h1>Service Chambres — Interface d'administration</h1>
-  <div class="badge">Python / Flask · Port 5001</div>
+  <h1>Service Chambres -- Interface d'administration</h1>
+  <div class="badge">Python / Flask - Port 5001</div>
 </div>
 
 <div class="container">
 
-  <!-- Stats -->
   <div class="stats" id="stats">
-    <div class="stat"><div class="val" id="stat-total">—</div><div class="lbl">Total chambres</div></div>
-    <div class="stat"><div class="val" id="stat-dispo" style="color:#4ade80">—</div><div class="lbl">Disponibles</div></div>
-    <div class="stat"><div class="val" id="stat-occup" style="color:#f87171">—</div><div class="lbl">Occupées</div></div>
+    <div class="stat"><div class="val" id="stat-total">--</div><div class="lbl">Total chambres</div></div>
+    <div class="stat"><div class="val" id="stat-dispo" style="color:#4ade80">--</div><div class="lbl">Disponibles</div></div>
+    <div class="stat"><div class="val" id="stat-occup" style="color:#f87171">--</div><div class="lbl">Occupees</div></div>
   </div>
 
   <div class="grid">
 
-    <!-- ── Formulaire ajout ── -->
     <div class="panel">
       <h2>Ajouter une chambre</h2>
-
       <div class="alert" id="alert"></div>
 
       <div class="form-group">
-        <label>Numéro de chambre *</label>
+        <label>Numero de chambre *</label>
         <input type="text" id="f-numero" placeholder="ex: 103"/>
       </div>
       <div class="form-group">
-        <label>Catégorie *</label>
+        <label>Categorie *</label>
         <select id="f-type">
           <option value="">-- Choisir --</option>
           <option value="Standard">Standard</option>
@@ -287,27 +279,26 @@ ADMIN_HTML = """
         <textarea id="f-desc" placeholder="Description de la chambre..."></textarea>
       </div>
       <div class="form-group">
-        <label>Disponible au départ</label>
+        <label>Disponible au depart</label>
         <select id="f-dispo">
-          <option value="true">Oui — Disponible</option>
-          <option value="false">Non — Occupée</option>
+          <option value="true">Oui -- Disponible</option>
+          <option value="false">Non -- Occupee</option>
         </select>
       </div>
 
       <button class="btn" onclick="ajouterChambre()">+ Ajouter la chambre</button>
 
       <div class="api-info">
-        <h3>Endpoint utilisé</h3>
-        <code>POST http://localhost:5001/chambres</code>
+        <h3>Endpoint utilise</h3>
+        <code>POST /api/chambres</code>
         <code>Content-Type: application/json</code>
       </div>
     </div>
 
-    <!-- ── Liste des chambres ── -->
     <div class="panel">
-      <h2>Chambres enregistrées</h2>
+      <h2>Chambres enregistrees</h2>
       <input class="search-bar" type="text" id="search"
-             placeholder="Rechercher par numéro, type..."
+             placeholder="Rechercher par numero, type..."
              oninput="filtrerChambres()"/>
       <div id="liste-chambres"><div class="empty">Chargement...</div></div>
     </div>
@@ -316,125 +307,129 @@ ADMIN_HTML = """
 </div>
 
 <script>
-let toutesChambres = [];
+var toutesChambres = [];
 
-// ── Charger les chambres depuis l'API REST ──────────────────────────────
 async function charger() {
-  const r    = await fetch('/chambres');
-  const data = await r.json();
-  toutesChambres = data.chambres || [];
-  mettreAJourStats(toutesChambres);
-  afficherChambres(toutesChambres);
+  try {
+    var r = await fetch('/api/chambres');
+    var data = await r.json();
+    toutesChambres = data.chambres || [];
+    mettreAJourStats(toutesChambres);
+    afficherChambres(toutesChambres);
+  } catch(e) {
+    document.getElementById('liste-chambres').innerHTML =
+      '<div class="empty">Erreur de chargement: ' + e.message + '</div>';
+  }
 }
 
 function mettreAJourStats(chambres) {
-  const dispo = chambres.filter(c => c.disponible).length;
+  var dispo = chambres.filter(function(c) { return c.disponible; }).length;
   document.getElementById('stat-total').textContent = chambres.length;
   document.getElementById('stat-dispo').textContent = dispo;
   document.getElementById('stat-occup').textContent = chambres.length - dispo;
 }
 
 function afficherChambres(chambres) {
-  const el = document.getElementById('liste-chambres');
+  var el = document.getElementById('liste-chambres');
   if (!chambres.length) {
-    el.innerHTML = '<div class="empty">Aucune chambre trouvée.</div>';
+    el.innerHTML = '<div class="empty">Aucune chambre trouvee.</div>';
     return;
   }
-  el.innerHTML = chambres.map(c => `
-    <div class="chambre-item" id="item-${c.id}">
-      <div class="chambre-info">
-        <div class="top">
-          <span class="num">N° ${c.numero}</span>
-          <span class="type">${c.type}</span>
-        </div>
-        <div class="desc">${c.description}</div>
-        <div class="tarif">${c.tarif.toLocaleString('fr')} Ar / nuit</div>
-      </div>
-      <div class="chambre-actions">
-        <span class="badge-dispo ${c.disponible ? 'ok' : 'non'}">
-          ${c.disponible ? 'Disponible' : 'Occupée'}
-        </span>
-        <button class="btn-small btn-suppr" onclick="supprimerChambre(${c.id})">
-          Supprimer
-        </button>
-      </div>
-    </div>
-  `).join('');
+  var html = '';
+  for (var i = 0; i < chambres.length; i++) {
+    var c = chambres[i];
+    html += '<div class="chambre-item" id="item-' + c.id + '">';
+    html += '<div class="chambre-info">';
+    html += '<div class="top">';
+    html += '<span class="num">N ' + c.numero + '</span>';
+    html += '<span class="type">' + c.type + '</span>';
+    html += '</div>';
+    html += '<div class="desc">' + c.description + '</div>';
+    html += '<div class="tarif">' + c.tarif.toLocaleString("fr") + ' Ar / nuit</div>';
+    html += '</div>';
+    html += '<div class="chambre-actions">';
+    html += '<span class="badge-dispo ' + (c.disponible ? "ok" : "non") + '">';
+    html += c.disponible ? "Disponible" : "Occupee";
+    html += '</span>';
+    html += '<button class="btn-small btn-suppr" onclick="supprimerChambre(' + c.id + ')">Supprimer</button>';
+    html += '</div>';
+    html += '</div>';
+  }
+  el.innerHTML = html;
 }
 
 function filtrerChambres() {
-  const q = document.getElementById('search').value.toLowerCase();
-  const filtrees = toutesChambres.filter(c =>
-    c.numero.toLowerCase().includes(q) ||
-    c.type.toLowerCase().includes(q) ||
-    c.description.toLowerCase().includes(q)
-  );
+  var q = document.getElementById('search').value.toLowerCase();
+  var filtrees = toutesChambres.filter(function(c) {
+    return c.numero.toLowerCase().indexOf(q) >= 0 ||
+           c.type.toLowerCase().indexOf(q) >= 0 ||
+           c.description.toLowerCase().indexOf(q) >= 0;
+  });
   afficherChambres(filtrees);
 }
 
-// ── Ajouter une chambre via POST /chambres ──────────────────────────────
 async function ajouterChambre() {
-  const numero = document.getElementById('f-numero').value.trim();
-  const type   = document.getElementById('f-type').value;
-  const tarif  = parseInt(document.getElementById('f-tarif').value);
-  const desc   = document.getElementById('f-desc').value.trim();
-  const dispo  = document.getElementById('f-dispo').value === 'true';
-  const alertEl = document.getElementById('alert');
+  var numero = document.getElementById('f-numero').value.trim();
+  var type = document.getElementById('f-type').value;
+  var tarif = parseInt(document.getElementById('f-tarif').value);
+  var desc = document.getElementById('f-desc').value.trim();
+  var dispo = document.getElementById('f-dispo').value === 'true';
+  var alertEl = document.getElementById('alert');
 
   alertEl.className = 'alert';
 
   if (!numero || !type || !tarif) {
     alertEl.className = 'alert err';
-    alertEl.textContent = 'Veuillez remplir les champs obligatoires (numéro, catégorie, tarif).';
+    alertEl.textContent = 'Veuillez remplir les champs obligatoires (numero, categorie, tarif).';
     return;
   }
 
   try {
-    const r = await fetch('/chambres', {
+    var r = await fetch('/api/chambres', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        numero, type, tarif,
-        description: desc || `Chambre ${type} N°${numero}`,
+        numero: numero,
+        type: type,
+        tarif: tarif,
+        description: desc || ('Chambre ' + type + ' N ' + numero),
         disponible: dispo
       })
     });
-    const data = await r.json();
+    var data = await r.json();
 
     if (!r.ok) {
       alertEl.className = 'alert err';
-      alertEl.textContent = data.erreur || 'Erreur lors de l\'ajout.';
+      alertEl.textContent = data.erreur || 'Erreur lors de l ajout.';
       return;
     }
 
     alertEl.className = 'alert ok';
-    alertEl.textContent = `✓ Chambre N°${data.chambre.numero} ajoutée avec succès (ID: ${data.chambre.id})`;
+    alertEl.textContent = 'Chambre N ' + data.chambre.numero + ' ajoutee (ID: ' + data.chambre.id + ')';
 
-    // Réinitialiser le formulaire
     document.getElementById('f-numero').value = '';
-    document.getElementById('f-type').value   = '';
-    document.getElementById('f-tarif').value  = '';
-    document.getElementById('f-desc').value   = '';
+    document.getElementById('f-type').value = '';
+    document.getElementById('f-tarif').value = '';
+    document.getElementById('f-desc').value = '';
 
     await charger();
-
-    setTimeout(() => { alertEl.className = 'alert'; }, 4000);
+    setTimeout(function() { alertEl.className = 'alert'; }, 4000);
 
   } catch (e) {
     alertEl.className = 'alert err';
-    alertEl.textContent = 'Erreur réseau : impossible de joindre le service.';
+    alertEl.textContent = 'Erreur reseau: ' + e.message;
   }
 }
 
-// ── Supprimer une chambre via DELETE /chambres/<id> ─────────────────────
 async function supprimerChambre(id) {
-  const chambre = toutesChambres.find(c => c.id === id);
-  if (!confirm(`Supprimer la chambre N°${chambre?.numero} ?`)) return;
-
-  const r = await fetch(`/chambres/${id}`, { method: 'DELETE' });
-  if (r.ok) {
-    await charger();
+  var chambre = null;
+  for (var i = 0; i < toutesChambres.length; i++) {
+    if (toutesChambres[i].id === id) { chambre = toutesChambres[i]; break; }
   }
+  if (!confirm('Supprimer la chambre N ' + (chambre ? chambre.numero : id) + ' ?')) return;
+
+  var r = await fetch('/api/chambres/' + id, { method: 'DELETE' });
+  if (r.ok) { await charger(); }
 }
 
 charger();
@@ -452,7 +447,7 @@ charger();
 def info():
     return jsonify({
         "service": "Service Chambres",
-        "version": "1.2.0",
+        "version": "1.3.0",
         "langage": "Python 3 / Flask",
         "port": 5001,
         "endpoints": {
@@ -473,14 +468,11 @@ def health():
     return jsonify({"statut": "ok", "service": "service-chambres"})
 
 
-# ── Interface d'administration HTML ──────────────────────────────────────────
 @app.route("/admin", methods=["GET"])
 def admin():
-    """Interface HTML pour gérer les chambres (ajout, suppression, liste)"""
     return render_template_string(ADMIN_HTML)
 
 
-# ── Lister toutes les chambres ────────────────────────────────────────────────
 @app.route("/chambres", methods=["GET"])
 def get_chambres():
     return jsonify({
@@ -490,7 +482,6 @@ def get_chambres():
     })
 
 
-# ── Chambres disponibles uniquement ──────────────────────────────────────────
 @app.route("/chambres/disponibles", methods=["GET"])
 def get_disponibles():
     disponibles = [c for c in CHAMBRES if c["disponible"]]
@@ -501,19 +492,16 @@ def get_disponibles():
     })
 
 
-# ── Détail d'une chambre ──────────────────────────────────────────────────────
 @app.route("/chambres/<int:chambre_id>", methods=["GET"])
 def get_chambre(chambre_id):
     chambre = next((c for c in CHAMBRES if c["id"] == chambre_id), None)
     if not chambre:
-        return jsonify({"erreur": f"Chambre {chambre_id} introuvable"}), 404
+        return jsonify({"erreur": "Chambre {} introuvable".format(chambre_id)}), 404
     return jsonify(chambre)
 
 
-# ── Ajouter une nouvelle chambre ──────────────────────────────────────────────
 @app.route("/chambres", methods=["POST"])
 def ajouter_chambre():
-    """Ajoute une nouvelle chambre — appelé depuis l'interface /admin"""
     global prochain_id
     data = request.get_json()
 
@@ -536,9 +524,8 @@ def ajouter_chambre():
             "valeurs_acceptees": ["Standard", "Suite Senior", "Suite Prestige"]
         }), 400
 
-    # Vérifier doublon de numéro
     if any(c["numero"] == numero for c in CHAMBRES):
-        return jsonify({"erreur": f"Le numéro de chambre '{numero}' existe déjà"}), 409
+        return jsonify({"erreur": "Le numero de chambre '{}' existe deja".format(numero)}), 409
 
     nouvelle_chambre = {
         "id":          prochain_id,
@@ -547,7 +534,7 @@ def ajouter_chambre():
         "tarif":       int(tarif),
         "devise":      "Ar",
         "disponible":  bool(data.get("disponible", True)),
-        "description": data.get("description", f"Chambre {type_c} N°{numero}"),
+        "description": data.get("description", "Chambre {} N {}".format(type_c, numero)),
         "articles":    ["Gel douche", "Papier hygienique", "Pantoufle", "Brosse a dent"]
     }
 
@@ -560,12 +547,11 @@ def ajouter_chambre():
     }), 201
 
 
-# ── Mettre à jour la disponibilité (appelé par Node.js) ──────────────────────
 @app.route("/chambres/<int:chambre_id>/disponibilite", methods=["PATCH"])
 def update_disponibilite(chambre_id):
     chambre = next((c for c in CHAMBRES if c["id"] == chambre_id), None)
     if not chambre:
-        return jsonify({"erreur": f"Chambre {chambre_id} introuvable"}), 404
+        return jsonify({"erreur": "Chambre {} introuvable".format(chambre_id)}), 404
 
     data = request.get_json()
     if data is None or "disponible" not in data:
@@ -584,15 +570,14 @@ def update_disponibilite(chambre_id):
     })
 
 
-# ── Supprimer une chambre ─────────────────────────────────────────────────────
 @app.route("/chambres/<int:chambre_id>", methods=["DELETE"])
 def supprimer_chambre(chambre_id):
     chambre = next((c for c in CHAMBRES if c["id"] == chambre_id), None)
     if not chambre:
-        return jsonify({"erreur": f"Chambre {chambre_id} introuvable"}), 404
+        return jsonify({"erreur": "Chambre {} introuvable".format(chambre_id)}), 404
     CHAMBRES.remove(chambre)
     return jsonify({
-        "message":    f"Chambre {chambre_id} supprimee avec succes",
+        "message":    "Chambre {} supprimee avec succes".format(chambre_id),
         "chambre_id": chambre_id
     })
 
