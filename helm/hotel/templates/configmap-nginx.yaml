@@ -5,7 +5,7 @@ metadata:
   namespace: hotel
   labels:
     app.kubernetes.io/name: hotel
-    app.kubernetes.io/instance: { { .Release.Name } }
+    app.kubernetes.io/instance: {{ .Release.Name }}
 data:
   default.conf: |
     server {
@@ -23,14 +23,12 @@ data:
             proxy_pass         http://service-chambres:5001/chambres;
             proxy_set_header   Host $host;
             proxy_set_header   X-Real-IP $remote_addr;
-            add_header         X-Served-By "service-chambres (Python/Flask)";
         }
 
         location /api/reservations {
             proxy_pass         http://service-reservation:5002/reservations;
             proxy_set_header   Host $host;
             proxy_set_header   X-Real-IP $remote_addr;
-            add_header         X-Served-By "service-reservation (Node.js/Express)";
         }
 
         location /api/health/chambres {
