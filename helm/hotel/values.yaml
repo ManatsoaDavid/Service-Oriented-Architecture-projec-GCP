@@ -8,7 +8,7 @@ namespace: hotel
 images:
   frontend:
     repository: europe-west1-docker.pkg.dev/project-919f0101-d717-4509-b40/bda-images/hotel-frontend
-    tag: "e10048d"
+    tag: "8dec22b"
     pullPolicy: IfNotPresent
 
   serviceChambres:
