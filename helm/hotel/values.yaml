@@ -9,7 +9,7 @@ images:
   frontend:
     repository: europe-west1-docker.pkg.dev/project-919f0101-d717-4509-b40/bda-images/hotel-frontend
 
-    tag: "794fbbd"
+    tag: "6dc9d89"
 
     pullPolicy: IfNotPresent
 
