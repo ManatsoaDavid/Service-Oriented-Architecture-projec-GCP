@@ -9,7 +9,6 @@ on:
 
 env:
   PROJECT_ID: project-919f0101-d717-4509-b40
-  REGISTRY: europe-west1-docker.pkg.dev
   IMAGE: europe-west1-docker.pkg.dev/project-919f0101-d717-4509-b40/bda-images/hotel-frontend
 
 permissions:
@@ -20,10 +19,12 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generer le tag
         id: tag
@@ -59,15 +60,31 @@ jobs:
       - name: Mettre a jour tag dans values.yaml
         run: |
           TAG="${{ steps.tag.outputs.IMAGE_TAG }}"
-          sed -i "/hotel-frontend/{n;s/tag: .*/tag: \"${TAG}\"/}" helm/hotel/values.yaml
-          echo "Verification :"
-          grep -A 3 "hotel-frontend" helm/hotel/values.yaml
+          python3 - << PYEOF
+tag = "$TAG"
+with open('helm/hotel/values.yaml', 'r') as f:
+    lines = f.readlines()
+in_frontend = False
+for i, line in enumerate(lines):
+    if 'hotel-frontend' in line:
+        in_frontend = True
+    if in_frontend and line.strip().startswith('tag:'):
+        lines[i] = '    tag: "' + tag + '"\n'
+        in_frontend = False
+        break
+with open('helm/hotel/values.yaml', 'w') as f:
+    f.writelines(lines)
+print("Tag mis a jour:", tag)
+PYEOF
+          echo "=== Verification ==="
+          grep -A 4 "hotel-frontend" helm/hotel/values.yaml
 
       - name: Commit et Push values.yaml
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git pull origin main
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/ManatsoaDavid/Service-Oriented-Architecture-projec-GCP.git
+          git pull origin main --rebase
           git add helm/hotel/values.yaml
-          git diff --staged --quiet || git commit -m "ci: hotel-frontend tag ${{ steps.tag.outputs.IMAGE_TAG }} [skip ci]"
+          git diff --staged --quiet && echo "Rien a committer" || git commit -m "ci: hotel-frontend tag ${{ steps.tag.outputs.IMAGE_TAG }} [skip ci]"
           git push origin main
