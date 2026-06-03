@@ -19,7 +19,6 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -59,23 +58,9 @@ jobs:
 
       - name: Mettre a jour tag dans values.yaml
         run: |
-          TAG="${{ steps.tag.outputs.IMAGE_TAG }}"
-          python3 - << PYEOF
-tag = "$TAG"
-with open('helm/hotel/values.yaml', 'r') as f:
-    lines = f.readlines()
-in_frontend = False
-for i, line in enumerate(lines):
-    if 'hotel-frontend' in line:
-        in_frontend = True
-    if in_frontend and line.strip().startswith('tag:'):
-        lines[i] = '    tag: "' + tag + '"\n'
-        in_frontend = False
-        break
-with open('helm/hotel/values.yaml', 'w') as f:
-    f.writelines(lines)
-print("Tag mis a jour:", tag)
-PYEOF
+          python3 .github/scripts/update_tag.py \
+            "${{ steps.tag.outputs.IMAGE_TAG }}" \
+            "hotel-frontend"
           echo "=== Verification ==="
           grep -A 4 "hotel-frontend" helm/hotel/values.yaml
 
